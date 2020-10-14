@@ -1,8 +1,10 @@
 package com.cj.backfragment2.ui.main
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -24,15 +26,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var mActionBarDrawerToggle: ActionBarDrawerToggle? = null
     val fm: FragmentManager = supportFragmentManager
-    var checkChangeTab : Boolean = true
+    var checkChangeTab : Boolean = false
 
+    @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initTab()
         initNav()
         mToolbar.setNavigationOnClickListener {
-            Toast.makeText(this, "a", Toast.LENGTH_LONG).show()
+            Log.d("nnn", "onCreate: "+checkChangeTab)
+            if(!checkChangeTab){
+                mDrawerLayout.openDrawer(Gravity.LEFT)
+            } else{
+                backStack()
+            }
         }
     }
 
@@ -66,7 +74,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (tab?.position != 0) {
                     changeNavDrawer(false)
                 } else {
-                    changeNavDrawer(true)
+                    for (frag in fm.getFragments()) {
+                        val childFm: FragmentManager = frag.childFragmentManager
+                        if (childFm.getBackStackEntryCount() > 0) {
+                            changeNavDrawer(true)
+                        } else{
+                            changeNavDrawer(false)
+                        }
+                        return
+                    }
                 }
             }
 
@@ -110,6 +126,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         } else if (i == 1) {
             changeNavDrawer(true)
+
         } else {
             changeNavDrawer(true)
         }
@@ -123,7 +140,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     childFm.popBackStack()
                     if (childFm.getBackStackEntryCount() == 1) {
                         changeNavDrawer(false)
-                        return
+                    } else{
+                        changeNavDrawer(true)
                     }
                     return
                 }
@@ -135,8 +153,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun changeNavDrawer(bo: Boolean) {
         if (bo) {
             mToolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace)
+            checkChangeTab = true
         } else {
             mToolbar.setNavigationIcon(R.drawable.ic_dehaze)
+            checkChangeTab = false
+        }
+    }
+
+    fun backStack(){
+        for (frag in fm.getFragments()) {
+            if (frag.isVisible && mViewPager.currentItem == 0) {
+                val childFm: FragmentManager = frag.childFragmentManager
+                if (childFm.getBackStackEntryCount() > 0) {
+                    childFm.popBackStack()
+                    if (childFm.getBackStackEntryCount() == 1) {
+                        changeNavDrawer(false)
+                    } else{
+                        changeNavDrawer(true)
+                    }
+                    return
+                }
+            }
         }
     }
 }
