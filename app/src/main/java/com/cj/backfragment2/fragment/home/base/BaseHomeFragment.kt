@@ -28,7 +28,6 @@ class BaseHomeFragment : Fragment(), OnCurrentFragmentListener {
     }
 
     fun replaceFragment(fragment: Fragment, addToBackStack: Boolean) {
-        var a = childFragmentManager
         val transaction = childFragmentManager.beginTransaction()
         if (addToBackStack) {
             transaction.addToBackStack(null)

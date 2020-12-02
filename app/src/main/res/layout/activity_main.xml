@@ -7,34 +7,39 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainActivity">
 
-    <RelativeLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/mToolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/mABL"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:background="@color/colorAccent"
-            app:title="Trang chủ" />
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/mToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:background="@color/colorAccent"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:title="Trang chủ" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/mTabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                app:tabIndicatorColor="#000"
+                app:tabIndicatorGravity="top"
+                app:tabSelectedTextColor="#F44336"
+                app:tabTextColor="#000" />
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/mViewPager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/mTabLayout"
-            android:layout_below="@+id/mToolbar" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/mTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:layout_alignParentBottom="true"
-            app:tabIndicatorColor="#000"
-            app:tabIndicatorGravity="top"
-            app:tabSelectedTextColor="#F44336"
-            app:tabTextColor="#000" />
-    </RelativeLayout>
+            android:layout_below="@id/mABL" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/mNavigationView"

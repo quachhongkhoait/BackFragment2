@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var mActionBarDrawerToggle: ActionBarDrawerToggle? = null
     val fm: FragmentManager = supportFragmentManager
-    var checkChangeTab : Boolean = false
+    var checkChangeTab: Boolean = false
 
     @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +35,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initTab()
         initNav()
         mToolbar.setNavigationOnClickListener {
-            Log.d("nnn", "onCreate: "+checkChangeTab)
-            if(!checkChangeTab){
+            Log.d("nnn", "onCreate: " + checkChangeTab)
+            if (!checkChangeTab) {
                 mDrawerLayout.openDrawer(Gravity.LEFT)
-            } else{
+            } else {
                 backStack()
             }
         }
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun initNav() {
         setSupportActionBar(mToolbar)
-        mToolbar.setTitle("Home")
+        mToolbar.title = "Home"
         mNavigationView.setNavigationItemSelectedListener(this)
         mActionBarDrawerToggle = ActionBarDrawerToggle(
             this,
@@ -74,11 +74,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (tab?.position != 0) {
                     changeNavDrawer(false)
                 } else {
-                    for (frag in fm.getFragments()) {
+                    for (frag in fm.fragments) {
                         val childFm: FragmentManager = frag.childFragmentManager
-                        if (childFm.getBackStackEntryCount() > 0) {
+                        if (childFm.backStackEntryCount > 0) {
                             changeNavDrawer(true)
-                        } else{
+                        } else {
                             changeNavDrawer(false)
                         }
                         return
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
-
+    
         })
     }
 
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCurrentFragment(i: Int) {
         if (i == 0) {
-            for (frag in fm.getFragments()) {
+            for (frag in fm.fragments) {
                 try {
                     if (frag.childFragmentManager.backStackEntryCount > 0) {
                         frag.childFragmentManager.popBackStack(
@@ -133,21 +133,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onBackPressed() {
-        for (frag in fm.getFragments()) {
-            if (frag.isVisible && mViewPager.currentItem == 0) {
-                val childFm: FragmentManager = frag.childFragmentManager
-                if (childFm.getBackStackEntryCount() > 0) {
-                    childFm.popBackStack()
-                    if (childFm.getBackStackEntryCount() == 1) {
-                        changeNavDrawer(false)
-                    } else{
-                        changeNavDrawer(true)
-                    }
-                    return
-                }
-            }
+        if (!backStack()) {
+            super.onBackPressed()
         }
-        super.onBackPressed()
     }
 
     fun changeNavDrawer(bo: Boolean) {
@@ -160,20 +148,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    fun backStack(){
-        for (frag in fm.getFragments()) {
+    fun backStack(): Boolean {
+        for (frag in fm.fragments) {
             if (frag.isVisible && mViewPager.currentItem == 0) {
                 val childFm: FragmentManager = frag.childFragmentManager
-                if (childFm.getBackStackEntryCount() > 0) {
+                if (childFm.backStackEntryCount > 0) {
                     childFm.popBackStack()
-                    if (childFm.getBackStackEntryCount() == 1) {
+                    if (childFm.backStackEntryCount == 1) {
                         changeNavDrawer(false)
-                    } else{
+                    } else {
                         changeNavDrawer(true)
                     }
-                    return
+                    return true
                 }
             }
         }
+        return false
     }
 }
